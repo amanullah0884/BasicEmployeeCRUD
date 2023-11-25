@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+@using (Html.BeginForm("Create", "ControllerName", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+}
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="Name" class="control-label">Name</label>
+            <input type="text" id="Name" name="Name" class="form-control" />
+            <span id="NameError" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="DOB" class="control-label">DOB</label>
+            <input type="text" id="DOB" name="DOB" class="form-control" />
+            <span id="DOBError" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Salary" class="control-label">Salary</label>
+            <input type="text" id="Salary" name="Salary" class="form-control" />
+            <span id="SalaryError" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="button" value="Create" class="btn btn-primary" id="createButton" />
+        </div>
+    </div>
+</div>
+
+<div>
+    <a href="Index">Back to List</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#createButton").click(function () {
+            // Get the anti-forgery token value
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            // Prepare data with the token
+            var data = {
+                Name: $("#Name").val(),
+                DOB: $("#DOB").val(),
+                Salary: $("#Salary").val(),
+                __RequestVerificationToken: token
+            };
+
+            $.ajax({
+                url: "Create",
+                method: "post",
+                data: data,
+                success: function (data) {
+                    // Handle success, e.g., redirect to another page
+                    window.location.href = data;
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    // Handle errors
+                    console.error("Error: " + textStatus, errorThrown);
+                }
+            });
+        });
+    });
+</script>
+
+
+
