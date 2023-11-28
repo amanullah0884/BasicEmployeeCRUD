@@ -1,48 +1,102 @@
-﻿@model IEnumerable<BasicAspNet.Models.Employee>
-
-@{
+﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+
+<h1>Employee List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a href="#" id="createNew">Create New</a>
 </p>
-<table class="table">
+<input type="number" id="searchId" />
+<input type="text" id="searchName" />
+<button onclick="loadEmployeeData()">Load Data</button>
+<table class="table" id="employeeTable">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DOB)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Salary)
-            </th>
+            <th data-column="Name">Name</th>
+            <th data-column="DOB">DOB</th>
+            <th data-column="Salary">Salary</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DOB)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salary)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
+        <!-- Table rows will be dynamically populated here -->
     </tbody>
 </table>
+
+<script>
+    $(document).ready(function () {
+        // Initial load of employee data
+        loadEmployeeData();
+
+        // Add click event to each table header for sorting
+        $('#employeeTable th').click(function () {
+            var column = $(this).data('column');
+
+            // Call AJAX to get sorted data
+            $.ajax({
+                url: '/Employee/Sort',
+                type: 'GET',
+                data: { column: column },
+                success: function (data) {
+                    // Replace the table body with the sorted data
+                    populateTable(data);
+                },
+                error: function () {
+                    console.error('Error fetching sorted data.');
+                }
+            });
+        });
+
+        // Create New Employee click event
+        $('#createNew').click(function (e) {
+            e.preventDefault();
+            // Add your logic to handle creating a new employee
+        });
+    });
+
+    function loadEmployeeData() {
+        // Call AJAX to get initial data
+        var data={ Name: $("#searchName").val(),
+                Id: $("#searchId").val()
+        };
+        $.ajax({
+            url: '/EmployeeApi/IndexData',
+            type: 'GET',
+            data: data,
+            success: function (data) {
+                // Populate the table body with initial data
+                populateTable(data);
+            },
+            error: function () {
+                console.error('Error fetching initial data.');
+            }
+        });
+    }
+
+    function populateTable(data) {
+        // Clear existing rows
+        $('#employeeTable tbody').empty();
+
+        // Iterate over JSON data and append rows to the table
+        $.each(data, function (index, item) {
+            debugger;
+            var row = '<tr>' +
+                '<td>' + item.name + '</td>' +
+                '<td>' + item.dob + '</td>' +
+                '<td>' + item.salary + '</td>' +
+                '<td>' +
+                '<a href="/Employee/Edit/' + item.id + '">Edit</a> | ' +
+                '<a href="/Employee/Details/' + item.id + '">Details</a> | ' +
+                '<a href="/Employee/Delete/' + item.id + '">Delete</a>' +
+                '</td>' +
+                '</tr>';
+
+            $('#employeeTable tbody').append(row);
+        });
+    }
+</script>
+
+

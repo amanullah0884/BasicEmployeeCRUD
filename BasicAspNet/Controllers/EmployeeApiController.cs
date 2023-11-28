@@ -20,10 +20,19 @@ namespace BasicAspNet.Controllers
         }
 
         // GET: Employee
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _employeeService.ListAsync());
+            return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> IndexData(SearchModel? searchModel)
+        {
+            var employee = await _employeeService.ListAsync(s=>
+              (string.IsNullOrWhiteSpace( searchModel.Name) || s.Name==searchModel.Name)&& 
+             (searchModel.Id==0|| s.ID==searchModel.Id));
+            return Ok(employee);
+        }
+
 
         // GET: Employee/Details/5
         public async Task<IActionResult> Details(int id)
