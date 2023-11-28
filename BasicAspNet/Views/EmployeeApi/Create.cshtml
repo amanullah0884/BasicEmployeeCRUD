@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -30,7 +29,7 @@
             <span id="SalaryError" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <input type="button" value="Create" class="btn btn-primary" id="createButton" />
+            <input type="button" value="Create" class="btn btn-primary" id="createButton" onclick="btnClieked()" />
         </div>
     </div>
 </div>
@@ -40,34 +39,32 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        $("#createButton").click(function () {
-            // Get the anti-forgery token value
-            var token = $('input[name="__RequestVerificationToken"]').val();
+    function btnClieked() {
+        // Get the anti-forgery token value
+        var token = $('input[name="__RequestVerificationToken"]').val();
 
-            // Prepare data with the token
-            var data = {
-                Name: $("#Name").val(),
-                DOB: $("#DOB").val(),
-                Salary: $("#Salary").val(),
-                __RequestVerificationToken: token
-            };
+        // Prepare data with the token
+        var data = {
+            Name: $("#Name").val(),
+            DOB: $("#DOB").val(),
+            Salary: $("#Salary").val(),
+            __RequestVerificationToken: token
+        };
 
-            $.ajax({
-                url: "Create",
-                method: "post",
-                data: data,
-                success: function (data) {
-                    // Handle success, e.g., redirect to another page
-                    window.location.href = data;
-                },
-                error: function (xhr, textStatus, errorThrown) {
-                    // Handle errors
-                    console.error("Error: " + textStatus, errorThrown);
-                }
-            });
+        $.ajax({
+            url: "/EmployeeApi/Create",
+            method: "post",
+            data: data,
+            success: function (data) {
+                // Handle success, e.g., redirect to another page
+                window.location.href = data;
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                // Handle errors
+                console.error("Error: " + textStatus, errorThrown);
+            }
         });
-    });
+    }
 </script>
 
 
